@@ -1,6 +1,7 @@
 # Augmentation
 import random
 import math
+import torch
 import torch.nn.functional as F
 
 def get_transform(image, label, augmentation_dict={'flip': True, 'offset': 0.1, 'scale':0.2, 'rotate':True,'noise': 0.1}):

@@ -74,8 +74,8 @@ class DataDownloader():
 
 	def check_sanity(self):
 		download_files = self.fs.listdir(self.remote_data_location)
-		train_files = os.path.listdir(self.target_train_dir)
-		val_files = os.path.listdir(self.target_val_dir)
+		train_files = self.fs.listdir(self.target_train_dir)
+		val_files = self.fs.listdir(self.target_val_dir)
 
 		train_npz = set([filename[:-9] for filename in train_files])
 		val_npz = set([filename[:-9] for filename in val_files])

@@ -81,7 +81,7 @@ class DataDownloader():
 		val_npz = set([filename[:-9] for filename in val_files])
 		total_npz_num = len(train_npz) + len(val_npz)
 
-		print("Remote npz_files: {}, Downloaded npz files: {} \n Train npz num: {}, Val npz num: ".format(
+		print("Remote npz_files: {}, Downloaded npz files: {} \n Train npz num: {}, Val npz num: {}".format(
 			len(download_files), total_npz_num, len(train_npz), len(val_npz)))
 		print("Train npy path: {}, Val npy path:{}".format(self.target_train_dir, self.target_val_dir))
 

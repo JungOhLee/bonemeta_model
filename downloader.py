@@ -61,7 +61,7 @@ class DataDownloader():
 		  self.fs.get(file, os.path.join(download_dir, os.path.split(file)[-1]))
 
 	def unzip(self, npz_file_list, npz_dir, target_dir):
-		for file_name in npz_file_list: 
+		for file_name in set(npz_file_list): 
 		  file_path = os.path.join(npz_dir, os.path.split(file_name)[-1])
 		  data_and_labels = np.load(file_path)
 		  datas = data_and_labels['data']

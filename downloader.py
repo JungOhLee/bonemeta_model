@@ -71,6 +71,8 @@ class DataDownloader():
 		    target_file_path = os.path.join(target_dir, target_file_name)
 		    single_data_and_label = np.concatenate([datas[i,:], labels[i,:][np.newaxis, :]], axis=0)
 		    np.save(target_file_path, single_data_and_label)
+		  # delete unzipped npz file
+		  os.remove(file_path)
 
 	def check_sanity(self):
 		download_files = self.fs.listdir(self.remote_data_location)

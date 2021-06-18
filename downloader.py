@@ -18,6 +18,7 @@ class DataDownloader():
 		self.bucket = s3bucket
 		print(self.bucket, self.remote_dir, self.img_type)
 		self.remote_data_location = 's3://{0}'.format(os.path.join(self.bucket, self.remote_dir, self.img_type))
+		self.train_list, self.val_list = self.set_train_val_list()
 
 	def set_local_dir(self):
 		self.set_dir(self.local_dir)
@@ -40,28 +41,37 @@ class DataDownloader():
 		if not os.path.exists(path):
 		  os.mkdir(path)
 
-	def download_and_unzip(self):
+	def set_train_val_list(self):
 		filenames = [file['name'] for file in self.fs.listdir(self.remote_data_location)]
 
 		random.seed(3)
-		val_list = random.choices(filenames, k = len(filenames)//5 + 1 )
+		val_list = random.choices(filenames, k = len(filenames)//5 + 1)
+		val_list = list(set(val_list))
 		train_list = list(set(filenames) - set(val_list))
+		return train_list, val_list
 
+	def download_and_unzip(self):
 		print("Downloading npz..")
-		self.download_npz(train_list, self.train_download_npz_dir)
-		self.download_npz(val_list, self.val_download_npz_dir)
+		self.download_npz(self.train_list, self.train_download_npz_dir)
+		self.download_npz(self.val_list, self.val_download_npz_dir)
 		print("Unzipping npz..")
-		self.unzip(train_list, self.train_download_npz_dir, self.target_train_dir)
-		self.unzip(val_list, self.val_download_npz_dir, self.target_val_dir)
+		self.unzip(self.train_list, self.train_download_npz_dir, self.target_train_dir)
+		self.unzip(self.val_list, self.val_download_npz_dir, self.target_val_dir)
 		print("Download and unzip completed")
 
+	def download_and_unzip_val(self):
+		print("Downloading npz..")
+		self.download_npz(self.val_list, self.val_download_npz_dir)
+		print("Unzipping npz..")
+		self.unzip(self.val_list, self.val_download_npz_dir, self.target_val_dir)
+		print("Download and unzip completed")
 
 	def download_npz(self, file_list, download_dir):
 		for file in file_list: 
 		  self.fs.get(file, os.path.join(download_dir, os.path.split(file)[-1]))
 
 	def unzip(self, npz_file_list, npz_dir, target_dir):
-		for file_name in set(npz_file_list): 
+		for file_name in set(npz_file_list):
 		  file_path = os.path.join(npz_dir, os.path.split(file_name)[-1])
 		  data_and_labels = np.load(file_path)
 		  datas = data_and_labels['data']
@@ -92,3 +102,7 @@ class DataDownloader():
 		self.download_and_unzip()
 		self.check_sanity()
 
+	def set_validation(self):
+		self.set_local_dir()
+		self.download_and_unzip_val()
+		self.check_sanity()
